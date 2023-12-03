@@ -6,23 +6,23 @@ def part1(input_file):
     return sum(map(int, part_numbers.values()))
 
 
-def is_valid_number(line, number, index):
+def valid_numbers(line, number, index):
     end = 0
     checked_all = False
+    all_numbers = []
     while not checked_all:
         try:
             start = line.index(number, end)
             end = start + len(number)
             within = start-1 <= index <= end
             if within:
-                return True
+                all_numbers.append(start)
         except ValueError:
             checked_all = True
-            return False
-    return False
+    return all_numbers
 
 
-def explore(schematic, row_index, column):
+def explore(schematic, row_index, symbol_column):
     numbers = {}
     pattern = re.compile(r"(\d+)")
     min_row, max_row = 0, len(schematic)-1
@@ -31,24 +31,25 @@ def explore(schematic, row_index, column):
         above_row = schematic[above_row_index]
         above_row_numbers = re.findall(pattern, above_row)
         for number in above_row_numbers:
-            if is_valid_number(above_row, number, column):
-                numbers[(above_row_index, above_row.index(number))] = number
+            columns = valid_numbers(above_row, number, symbol_column)
+            for column in columns:
+                numbers[(above_row_index, column)] = number
     if row_index < max_row:
         below_row_index = row_index + 1
         below_row = schematic[below_row_index]
         below_row_numbers = re.findall(pattern, below_row)
         for number in below_row_numbers:
-            if is_valid_number(below_row, number, column):
-                numbers[(below_row_index, below_row.index(number))] = number
+            columns = valid_numbers(below_row, number, symbol_column)
+            for column in columns:
+                numbers[(below_row_index, column)] = number
 
     row = schematic[row_index]
     row_numbers = re.findall(pattern, row)
     for number in row_numbers:
-        if is_valid_number(row, number, column):
-            numbers[(row_index, row.index(number))] = number
+        columns = valid_numbers(row, number, symbol_column)
+        for column in columns:
+            numbers[(row_index, column)] = number
     return numbers
-
-
 
 
 def extract_part_numbers(schematic):
