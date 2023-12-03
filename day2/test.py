@@ -1,3 +1,4 @@
+from tester import testbase
 import day2
 
 
@@ -9,16 +10,7 @@ def test_extract_max():
         ("Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red", (4, 14, 3, 15)),
         ("Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green", (5, 6, 3, 2)),
     )
-    for params, expected in test_cases:
-        try:
-            actual = day2.extract_max(params)
-        except Exception as e:
-            actual = e
-        if actual != expected:
-            print(f"extract({params}) => {actual} (!= '{expected}')")
-        else:
-            print(f"extract({params}) => OK !")
-
+    testbase.test(day2.extract_max, test_cases)
 
 
 def test_extract_min():
@@ -37,15 +29,7 @@ Game 5 needed no fewer than 6 red, 3 green, and 2 blue cubes in the bag.
         ("Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red", (4, 14, 3, 15)),
         ("Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green", (5, 6, 3, 2)),
     )
-    for params, expected in test_cases:
-        try:
-            actual = day2.extract_min(params)
-        except Exception as e:
-            actual = e
-        if actual != expected:
-            print(f"extract({params}) => {actual} (!= '{expected}')")
-        else:
-            print(f"extract({params}) => OK !")
+    testbase.test(day2.extract_min, test_cases)
 
 
 if __name__ == '__main__':
