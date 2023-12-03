@@ -52,7 +52,7 @@ def explore(schematic, row_index, symbol_column):
     return numbers
 
 
-def extract_part_numbers(schematic):
+def extract_part_numbers(schematic, verbose=False):
     part_numbers = {}
     numerics = set()
     symbols = set()
@@ -67,8 +67,9 @@ def extract_part_numbers(schematic):
                     numbers = explore(schematic, row_index, i)
                     if numbers:
                         part_numbers.update(numbers)
-    print(numerics)
-    print(symbols)
+    if verbose:
+        print(numerics)
+        print(symbols)
     return part_numbers
 
 
