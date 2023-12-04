@@ -6,6 +6,11 @@ def part1(input_file):
     return sum(map(int, part_numbers.values()))
 
 
+def part2(input_file):
+    gear_ratios = extract_gears(input_file.readlines())
+    return sum(map(int, gear_ratios))
+
+
 def valid_numbers(number, index):
     try:
         start = number.start()
@@ -69,8 +74,21 @@ def extract_part_numbers(schematic, verbose=False):
     return part_numbers
 
 
+
+def extract_gears(schematic, verbose=False):
+    gears = []
+    for row_index, line in enumerate(schematic):
+        for i, symbol in enumerate(line):
+            if symbol == '*':
+                numbers = explore(schematic, row_index, i)
+                if len(numbers) == 2:
+                    one, two = map(int, numbers.values())
+                    gears.append(one * two)
+    return gears
+
+
 if __name__ == '__main__':
     inputfilename = 'input'
     with open(inputfilename) as f:
-        answer = part1(f)
-    print(f"{answer} (=? 522726)")
+        answer = part2(f)
+    print(f"{answer}")
