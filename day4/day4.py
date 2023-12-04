@@ -45,21 +45,21 @@ def part2(lotterypile):
         intersection = winning_numbers.intersection(my_numbers)
         for i in range(1, len(intersection) + 1):
             card_copy = current_card_copy + i
-            if card_copy < len(lotterypile):
-                if card_copy in card_copies:
-                    card_copies[card_copy] += card_copies[current_card_copy]
-                else:
-                    card_copies[card_copy] = 1 + card_copies[current_card_copy]
+            if card_copy in card_copies:
+                card_copies[card_copy] += card_copies[current_card_copy]
+            else:
+                card_copies[card_copy] = 1 + card_copies[current_card_copy]
         current_card_copy += 1
     return sum(card_copies.values())
 
 # 3760351
 # 5002065
+# 5132675 (the cards outside of the limit did count
 # That's not the right answer; your answer is too low.
 
 
 if __name__ == '__main__':
     inputfilename = 'input'
     with open(inputfilename) as f:
-        answer = part1(f.readlines())
+        answer = part2(f.readlines())
     print(f"{answer}")
