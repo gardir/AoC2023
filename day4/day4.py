@@ -13,18 +13,24 @@ digits = re.compile(r"(\d+)")
 def part1(lotterypile):
     total_points = 0
     for line in lotterypile:
+        line = line.split(":")[1]
         winning_numbers, my_hand = line.split("|")
         winning_numbers = set(re.findall(digits, winning_numbers))
         my_numbers = set(re.findall(digits, my_hand))
         intersection = winning_numbers.intersection(my_numbers)
-        power = len(intersection) - 1
-        points = 2 ** power
+        if len(intersection) == 0:
+            points = 0
+        else:
+            power = len(intersection) - 1
+            points = 2 ** power
         total_points += points
+
     return total_points
 
 # 27072
 # 26988
-# That's not the right answer; your answer is too high. If you're stuck, make sure you're using the full input data; there are also some general tips on the about page, or you can ask for hints on the subreddit. Please wait one minute before trying again. [Return to Day 4]
+# 26972
+# That's not the right answer; your answer is too high.
 
 
 if __name__ == '__main__':
