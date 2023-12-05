@@ -40,11 +40,17 @@ def part1(infile):
 
 
 def part2(infile):
-    seed_ranges = []
-    seeds = re.finditer(seed_filter, infile.readline())
-    for seed_start, seed_range in seeds:
-        seed_ranges.append((seed_start, seed_range))
-    print(seed_ranges)
+    seeds = re.findall(seed_filter, infile.readline())
+    class Seed():
+
+        def __iter__(self):
+            for seed_start, seed_range in zip(seeds[::2], seeds[1::2]):
+                start = int(seed_start)
+                end = start + int(seed_range)
+                for seed in range(start, end):
+                    yield seed
+    return find_closest_location(infile, Seed())
+
 
 
 def find_closest_location(infile, seeds):
@@ -53,19 +59,22 @@ def find_closest_location(infile, seeds):
         read_ranges(infile, phase)
     # print(range_maps)
     locations = []
-    for seed in seeds:
-        # print(f"seed {seed} =>", end='')
-        transformation = seed
-        for phase in phases:
-            phase_range = range_maps[phase]
-            for range in phase_range:
-                if range.convert(transformation):
-                    transformation = range.convert(transformation)
-                    break
-            # print(f" ({phase}) {transformation}", end='')
-        print()
-        print(f"seed '{seed}' => '{transformation}'")
-        locations.append(transformation)
+    try:
+        for seed in seeds:
+            # print(f"seed {seed} =>", end='')
+            transformation = seed
+            for phase in phases:
+                phase_range = range_maps[phase]
+                for range in phase_range:
+                    if range.convert(transformation):
+                        transformation = range.convert(transformation)
+                        break
+                # print(f" ({phase}) {transformation}", end='')
+            # print()
+            # print(f"seed '{seed}' => '{transformation}'")
+            locations.append(transformation)
+    except StopIteration:
+        pass
     return min(locations)
 
 
