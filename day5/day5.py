@@ -41,16 +41,24 @@ def part1(infile):
 
 def part2(infile):
     seeds = re.findall(seed_filter, infile.readline())
-    class Seed():
-
+    seed_pairs = len(seeds) // 2
+    total_seeds_to_check = sum(int(seed_range) for seed_range in seeds[1::2])
+    print(total_seeds_to_check)
+    class Seed:
         def __iter__(self):
+            n = 0
+            previous_print = f"{n / total_seeds_to_check*100:.02f}% complete"
             for seed_start, seed_range in zip(seeds[::2], seeds[1::2]):
                 start = int(seed_start)
                 end = start + int(seed_range)
                 for seed in range(start, end):
+                    n += 1
+                    percent = f"{n / total_seeds_to_check*100:.02f}% complete"
+                    if percent != previous_print:
+                        print(f"{percent}  ({n}/{total_seeds_to_check})")
+                        previous_print = percent
                     yield seed
     return find_closest_location(infile, Seed())
-
 
 
 def find_closest_location(infile, seeds):
@@ -58,7 +66,7 @@ def find_closest_location(infile, seeds):
     for phase in phases:
         read_ranges(infile, phase)
     # print(range_maps)
-    locations = []
+    best_location = None
     try:
         for seed in seeds:
             # print(f"seed {seed} =>", end='')
@@ -72,10 +80,10 @@ def find_closest_location(infile, seeds):
                 # print(f" ({phase}) {transformation}", end='')
             # print()
             # print(f"seed '{seed}' => '{transformation}'")
-            locations.append(transformation)
+            best_location = transformation if best_location is None or transformation < best_location else best_location
     except StopIteration:
         pass
-    return min(locations)
+    return best_location
 
 
 def read_ranges(infile, phase):
