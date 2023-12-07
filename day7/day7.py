@@ -6,22 +6,22 @@ example = 'example'
 test = 'test'
 
 ranks = [
-    (re.compile(r"(\w)\1{4}"),  "five-of-a-kind"),
-    (re.compile(r"\w*?(\w)\1{3}\w*?"),  "four-of-a-kind"),
-    (re.compile(r"(?:(\w)\1\1(\w)\2|(\w)\3(\w)\4\4)"),  "Full house"),
-    (re.compile(r"\w*?(\w)\1{2}\w*?"),  "Three of a kind"),
-    (re.compile(r"\w*?(\w)\1\w*?(\w)\2\w*?"),  "Two pair"),
-    (re.compile(r"\w*?(\w)\1\w*?"),  "One pair"),
+    (re.compile(r"(\w)(?:\1|J){4}"),  "Five of a kind"),
+    (re.compile(r"\w*?(\w)\w*(?:\1|J)\w*?(?:\1|J)\w*?(?:\1|J)\w*?"),  "Four of a kind"),
+    (re.compile(r"(\w)(?:\1|J)(?:\1|J)(\w)(?:\2|J)|(\w)(?:\3|J)(\w)(?:\4|J)(?:\4|J)"),  "Full house"),
+    (re.compile(r"\w*?(\w)\w*?(?:\1|J)\w*?(?:\1|J)\w*?"),  "Three of a kind"),
+    (re.compile(r"\w*?(\w)\w*?(?:\1|J)\w*?(\w)\w*?(\2|J)\w*?"),  "Two pair"),
+    (re.compile(r"\w*?(\w)\w*?(?:\1|J)\w*?"),  "One pair"),
     (re.compile(r"(\w{5})"), "High card"),
 ]
 
-card_ranks = [c.strip() for c in "A, K, Q, J, T, 9, 8, 7, 6, 5, 4, 3, 2".split(",")]
+card_ranks = [c.strip() for c in "A, K, Q, T, 9, 8, 7, 6, 5, 4, 3, 2, J".split(",")]
 
 
 class Hand:
     def __init__(self, hand, value):
         self.hand = hand
-        self.value = value
+        self.value = int(value)
         self.sorted_hand = ''.join(sorted(hand, key=lambda v: card_ranks.index(v.upper())))
         self.rank, self.rank_description = self.estimate_rank(hand)
 
@@ -44,18 +44,12 @@ class Hand:
                         return True
                     if uv < iv:
                         return False
-        return False
+            elif other.rank < self.rank:
+                return False
+        raise Exception(f"Invalid comparison: {self} < {other}")
 
     def __repr__(self):
-        return f"Hand<{self.hand} ({self.sorted_hand}) has {self.rank_description} ({self.rank})>"
-
-
-class Hands:
-
-    def __init__(self, handlines):
-        self.all_hands = {}
-        for i, hand in enumerate(handlines):
-            self.all_hands[i] = Hand(*hand.split())
+        return f"Hand<{self.hand}('{self.sorted_hand}'=>{self.rank_description}, {self.rank})>"
 
 
 n = 0
@@ -68,8 +62,13 @@ with open(real) as f:
 total_winnings = 0
 while not hands.empty():
     hand = hands.get()
-    winnings = n * int(hand.value)
-    print(f"{hand} achieved {winnings} winnings")
+    winnings = n * hand.value
+    print(f"{hand} achieved ({n} * {hand.value} =) {winnings} winnings")
     total_winnings += winnings
     n -= 1
 print(total_winnings)
+
+# 249456356 too high on first attempt
+# 249400220  something in between
+# 249243143  still too low
+# 249232528 too low on second attempt
